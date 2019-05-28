@@ -1,0 +1,6 @@
+*.o
+dish
+parser/parser.c
+parser/parser.h
+parser/lexer.c
+.vscode/*
