@@ -51,7 +51,7 @@ CommandPack     : CommandPack CommandLine background_opt {
                 }
                 ;
 
-CommandLine     : CommandLine Chain_op Command Linebreak {
+CommandLine     : CommandLine Chain_op Command {
                     enum ChainType c = CHAIN_NONE;
                     switch($2.iVal)
                     {

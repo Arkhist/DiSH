@@ -23,23 +23,19 @@ void displayPrompt(int err)
 
 int redirect(int desc, int target)
 {
-    int save = dup(target);
-    close(target);
-    if(dup2(desc, target) == -1)
-    {
-        dup2(save, target);
-        close(save);
-        return -1;
-    }
-    return save;
+    dup2(desc, target);
+    return 1;
 }
 
-int executeFromPath(Command* cmd, /*@out@*/ int* ret)
+int executeFromPath(int pipes[2], Command* cmd, /*@out@*/ int* ret)
 {
     pid_t forkVal;
     forkVal = fork();
     if(forkVal == 0)
     {
+        for(int i = 0; i < 2; i++)
+            if(pipes[i] != -1)
+                redirect(pipes[i], i);
         int r = execvp(cmd->argv[0], cmd->argv);
         exit(r);
     }
@@ -55,14 +51,14 @@ int executeFromPath(Command* cmd, /*@out@*/ int* ret)
     }
 }
 
-int executeCommand(Command* cmd)
+int executeCommand(int pipes[2], Command* cmd)
 {
     if(cmd->argc == 0)
         return 0;
     int ret = 0;
     if(executeInternal(cmd, &ret))
         return ret;
-    if(executeFromPath(cmd, &ret))
+    if(executeFromPath(pipes, cmd, &ret))
         return ret;
     return 0;
 }
@@ -70,40 +66,35 @@ int executeCommand(Command* cmd)
 int executeLine(CommandLine* line)
 {
     int ret = 0;
-    int pipefd[2] = {-1, -1};
-    for(int i = 0; i < line->amt; i++)
-        if(line->chain[i] == CHAIN_PIPE)
-        {
-            pipe(pipefd);
-        }
+    int pipeFirst[2] = {-1, -1};
+    int pipeSecond[2] = {-1, -1};
+
     for(int i = 0; i < line->amt; i++)
     {
+        pipe(pipeSecond);
         if(exiting)
             break;
-        // Pipe behavior
+
+        if(line->chain[i] == CHAIN_AND && ret != 0)
+            return ret;
+        int cPipe[2] = {-1, -1};
         if(i != line->amt - 1)
-        {
             if(line->chain[i+1] == CHAIN_PIPE)
-            {
-                redirect(1, pipefd[1]);
-            }
-        }
+                cPipe[1] = pipeSecond[1];
         if(line->chain[i] == CHAIN_PIPE)
         {
-            redirect(0, pipefd[0]);
+            cPipe[0] = pipeFirst[0];
         }
+        ret = executeCommand(cPipe, line->pipeline[i]);
 
-
-        if(i == 0)
+        if(pipeFirst[0] != -1)
+            close(pipeFirst[0]);
+        close(pipeSecond[1]);
+        pipeSecond[1] = -1;
+        for(int j = 0; j < 2; j++)
         {
-            ret = executeCommand(line->pipeline[0]);
-        }
-        else
-        {
-            if(line->chain[i] == CHAIN_AND && ret != 0)
-                return ret;
             
-            ret = executeCommand(line->pipeline[i]);
+            pipeFirst[j] = pipeSecond[j];
         }
     }
     return ret;
