@@ -131,23 +131,24 @@ int executePack(CommandPack* pack)
     return ret;
 }
 
-int mainLoop()
+int mainLoop(FILE* inputFile)
 {    
     int lastErr = 0;
+    exiting = 0;
 
-    while(1)
+    while(!exiting)
     {
-        displayPrompt(lastErr);
-        CommandPack* pack = parseCommands();
+        if(inputFile == stdin)
+            displayPrompt(lastErr);
+        CommandPack* pack = parseCommands(inputFile);
         if(pack == NULL) // TODO : Newline doesn't work ?!
         {
-            printf("\n");
+            if(inputFile == stdin)
+                printf("\n");
             break;
         }
 
         lastErr = executePack(pack);
-        if(exiting)
-            break;
     }
 
     return 0;

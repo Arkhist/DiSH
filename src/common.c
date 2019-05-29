@@ -112,9 +112,9 @@ void cmdp_destroy(CommandPack* pack)
     free(pack);
 }
 
-CommandPack* parseCommands()
+CommandPack* parseCommands(FILE* inputFile)
 {
-    yyrestart(stdin);
+    yyrestart(inputFile);
     if(yyparse())
         return NULL;
     return outPack;

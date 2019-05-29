@@ -122,7 +122,7 @@ static int changeDirectory(Command* cmd)
 
 static int assign(Command* cmd)
 {
-    if(cmd->argc != 3)
+    if(cmd->argc != 4)
     {
         printf("Internal assignment error : args\n");
         return 1;
