@@ -157,6 +157,7 @@ static int alias(Command* cmd)
 
 static int exitSh(Command* cmd)
 {
+    (void)cmd;
     exiting = 1;
     return 0;
 }

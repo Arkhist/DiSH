@@ -29,6 +29,16 @@ Command* cmd_create()
     r->redirAmt = 0;
     return r;
 }
+Command* cmd_copy(Command* cmd)
+{
+    Command* r = cmd_create();
+    for(int i = 0; i < cmd->argc; i++)
+        cmd_addArg(r, cmd->argv[i]);
+    for(int i = 0; i < cmd->redirAmt; i++)
+        cmd_addRedirect(r, cmd->redirections[i]);
+    return r;
+}
+
 void cmd_addArg(Command* cmd, char* arg)
 {
     cmd->argv = (char**)realloc(cmd->argv, (cmd->argc+1)*sizeof(char*));

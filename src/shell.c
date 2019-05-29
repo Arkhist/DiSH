@@ -60,7 +60,7 @@ int executeFromPath(int pipes[2], Command* cmd, /*@out@*/ int* ret)
 
 int executeCommand(int pipes[2], Command* cmd)
 {
-    processAliases(cmd);
+    cmd = processAliases(cmd);
     if(cmd->argc == 0)
         return 0;
     int ret = 0;

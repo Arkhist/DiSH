@@ -4,7 +4,7 @@
 
 extern char** environ;
 
-int processAliases(Command* cmd);
+Command* processAliases(Command* cmd);
 
 int removeAlias(char* alias);
 int addAlias(char** args);

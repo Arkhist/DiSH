@@ -32,6 +32,7 @@ typedef struct
 } Command;
 
 Command* cmd_create();
+Command* cmd_copy(Command* cmd);
 void cmd_addArg(Command* cmd, char* arg);
 void cmd_addRedirect(Command* cmd, FileRedirection redir);
 void cmd_destroy(Command* cmd);

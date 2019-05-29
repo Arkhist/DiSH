@@ -9,25 +9,28 @@ int maxAliasId = 0;
 typedef struct
 {
     char* alias;
-    char* target;
+    Command* target;
 } AliasStruct;
 
 AliasStruct* aliasArray = NULL;
 
 // Argument alias ?
-int processAliases(Command* cmd)
+Command* processAliases(Command* cmd)
 {
     for(int i = 0; i < maxAliasId; i++)
     {
         if(aliasArray[i].alias == NULL)
             continue;
         if(!strcmp(aliasArray[i].alias, cmd->argv[0]))
-        {
-            free(cmd->argv[0]);
-            cmd->argv[0] = strdup(aliasArray[i].target);
+        {            
+            Command* r = cmd_copy(aliasArray[i].target);
+            for(int i = 0; i < cmd->redirAmt; i++)
+                cmd_addRedirect(r, cmd->redirections[i]);
+            cmd_destroy(cmd);
+            return r;
         }
     }
-    return 1;
+    return cmd;
 }
 
 int removeAlias(char* alias)
@@ -39,7 +42,7 @@ int removeAlias(char* alias)
         if(!strcmp(aliasArray[i].alias, alias))
         {
             free(aliasArray[i].alias);
-            free(aliasArray[i].target);
+            cmd_destroy(aliasArray[i].target);
             aliasArray[i].alias = NULL;
             aliasArray[i].target = NULL;
             return 1;
@@ -53,22 +56,15 @@ int addAlias(char* args[])
 {
     // We suppose args contains at least 4 elements, and is terminated by NULL ptr.
     char* alias = args[1];
+    int i = 0;
 
-    char* target = NULL;
-    int tSize = 0;
-    int i = 2;
+    Command* target = NULL;
+    target = cmd_create();
+
+    i = 2;
     while(args[i] != NULL)
     {
-        tSize += strlen(args[i])+1;
-        i++;
-    }
-    target = (char*)calloc(tSize, sizeof(char));
-    strcpy(target, args[2]);
-    i = 3;
-    while(args[i] != NULL)
-    {
-        strcat(target, " ");
-        strcat(target, args[i]);
+        cmd_addArg(target, strdup(args[i]));
         i++;
     }
     int targetId = -1;
