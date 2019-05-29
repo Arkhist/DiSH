@@ -1,6 +1,7 @@
 #pragma once
 
 #define YYSTYPE TokType
+#define MAX_PATH 4096
 
 #include <stdlib.h>
 #include <stdio.h>

@@ -2,11 +2,14 @@
 
 #include <string.h>
 #include <dirent.h>
+#include <limits.h>
 #include <stdlib.h>
 
 #include "common.h"
 
+#define _DEFAULT_SOURCE 1
 #define INTERN_COMMAND_AMT 5
+#define _XOPEN_SOURCE 700
 
 int exiting = 0;
 
@@ -54,7 +57,7 @@ static int changeDirectory(Command* cmd)
         return 1;
     }
 
-    // TODO : Simplify paths
+    char rPath[MAX_PATH] = {0};
 
     int pathLen = strlen(cmd->argv[1]);
 
@@ -69,16 +72,16 @@ static int changeDirectory(Command* cmd)
             return 1;
         }
         closedir(curDir);
-        char newEnv[3+1+pathLen+1];
+        realpath(cmd->argv[1], rPath);
+        char newEnv[3+1+strlen(rPath)+1];
         strcpy(newEnv, "PWD=");
-        strcat(newEnv, cmd->argv[1]);
+        strcat(newEnv, rPath);
+        chdir(strdup(rPath));
         putenv(strdup(newEnv));
     }
     else // Relative Path
     {
-        char* target = NULL;
-        target = (char*)calloc(strlen(getenv("PWD"))+1, sizeof(char));
-        strcpy(target, getenv("PWD"));
+        strcpy(rPath, getenv("PWD"));
         DIR* curDir = NULL;
 
         int from = 0;
@@ -89,28 +92,29 @@ static int changeDirectory(Command* cmd)
             to = from;
             while(to < pathLen && cmd->argv[1][to] != '/')
                 to++;
-            printf("%d\n", to);
-            
-            target = (char*)realloc(target, (strlen(target)+to-from+1)*sizeof(char));
-            
-            strcat(target, "/");
+                        
+            strcat(rPath, "/");
             for(int i = from; i < to; i++)
-                strncat(target, &cmd->argv[1][i], 1);
-            printf("%s\n", target);
+                strncat(rPath, &cmd->argv[1][i], 1);
+            char buf[MAX_PATH+1] = {0};
+            for(int i = 0; i < MAX_PATH; i++)
+                buf[i] = rPath[i];
+            realpath(buf, rPath);
 
-            curDir = opendir(target);
+            curDir = opendir(rPath);
             if(curDir == NULL)
             {
-                printf("Failed to open %s\n", target);
+                printf("Failed to open %s\n", rPath);
                 return 1;
             }
             closedir(curDir);
             from = to + 1;
         }
 
-        char newEnv[3+1+strlen(target)+1];
+        char newEnv[3+1+strlen(rPath)+1];
         strcpy(newEnv, "PWD=");
-        strcat(newEnv, target);
+        strcat(newEnv, rPath);
+        chdir(strdup(rPath));
         putenv(strdup(newEnv));
     }
 

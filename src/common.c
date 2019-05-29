@@ -9,6 +9,8 @@ CommandPack* outPack = NULL;
 
 char* strdup(char* s)
 {
+    if(s == NULL)
+        return NULL;
     char* r;
     size_t len = strlen(s);
 

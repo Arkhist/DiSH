@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <string.h>
+#include <dirent.h>
+#include <limits.h>
+
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -30,13 +34,36 @@ int redirect(int desc, int target)
     return save;
 }
 
+int executeFromPath(Command* cmd, /*@out@*/ int* ret)
+{
+    pid_t forkVal;
+    forkVal = fork();
+    if(forkVal == 0)
+    {
+        int r = execvp(cmd->argv[0], cmd->argv);
+        exit(r);
+    }
+    else
+    {
+        int status = 0;
+        wait(&status);
+        int code = (char)WEXITSTATUS(status);
+        *ret = code;
+        if(code == -1)
+            printf("Command not found: %s\n", cmd->argv[0]);
+        return 1;
+    }
+}
+
 int executeCommand(Command* cmd)
 {
+    if(cmd->argc == 0)
+        return 0;
     int ret = 0;
     if(executeInternal(cmd, &ret))
         return ret;
-    if(cmd->argc != 0)
-        printf("executing %s\n", cmd->argv[0]);
+    if(executeFromPath(cmd, &ret))
+        return ret;
     return 0;
 }
 

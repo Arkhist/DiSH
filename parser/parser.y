@@ -115,6 +115,7 @@ Command         : Modifiers WORD ArgList Modifiers  {
                     for(int i = 0; i < $4.cmd->redirAmt; i++)
                         cmd_addRedirect(cmd, $4.cmd->redirections[i]);
                     cmd_destroy($4.cmd);
+                    cmd_addArg(cmd, NULL);
                     TokType tok;
                     tok.cmd = cmd;
                     $$ = tok;
@@ -124,6 +125,7 @@ Command         : Modifiers WORD ArgList Modifiers  {
                     cmd_addArg(cmd, "_assign");
                     cmd_addArg(cmd, $2.strVal);
                     cmd_addArg(cmd, $4.strVal);
+                    cmd_addArg(cmd, NULL);
                     TokType tok;
                     tok.cmd = cmd;
                     $$ = tok;
