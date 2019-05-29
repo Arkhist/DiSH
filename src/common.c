@@ -92,9 +92,11 @@ void cmdl_destroy(CommandLine* line)
     {
         for(int i = 0; i < line->amt; i++)
         {
-            free(line->pipeline[i]);
+            if(line->pipeline[i] != NULL)
+                free(line->pipeline[i]);
         }
         free(line->pipeline);
+        free(line->chain);
     }
     free(line);
 }
@@ -116,7 +118,8 @@ void cmdp_destroy(CommandPack* pack)
     if(pack->amt > 0)
     {
         for(int i = 0; i < pack->amt; i++)
-            free(pack->lines[i]);
+            if(pack->lines[i] != NULL)
+                free(pack->lines[i]);
         free(pack->lines);
     }
     free(pack);

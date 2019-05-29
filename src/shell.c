@@ -94,6 +94,8 @@ int executeLine(CommandLine* line)
             cPipe[0] = pipeFirst[0];
         }
         ret = executeCommand(cPipe, line->pipeline[i]);
+        cmd_destroy(line->pipeline[i]);
+        line->pipeline[i] = NULL;
 
         if(pipeFirst[0] != -1)
             close(pipeFirst[0]);
@@ -127,6 +129,8 @@ int executePack(CommandPack* pack)
         }
         else
             ret = executeLine(line);
+        cmdl_destroy(line);
+        pack->lines[i] = NULL;
     }
     return ret;
 }
@@ -149,6 +153,7 @@ int mainLoop(FILE* inputFile)
         }
 
         lastErr = executePack(pack);
+        cmdp_destroy(pack);
     }
 
     return 0;

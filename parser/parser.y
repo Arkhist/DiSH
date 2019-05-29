@@ -106,6 +106,7 @@ background_opt  : AMP   {
 Command         : Modifiers WORD ArgList Modifiers  {
                     Command* cmd = cmd_create();
                     cmd_addArg(cmd, $2.strVal);
+                    free($2.strVal);
                     for(int i = 0; i < $3.cmd->argc; i++)
                         cmd_addArg(cmd, $3.cmd->argv[i]);
                     cmd_destroy($3.cmd);
@@ -124,7 +125,9 @@ Command         : Modifiers WORD ArgList Modifiers  {
                     Command* cmd = cmd_create();
                     cmd_addArg(cmd, "_assign");
                     cmd_addArg(cmd, $2.strVal);
+                    free($2.strVal);
                     cmd_addArg(cmd, $4.strVal);
+                    free($4.strVal);
                     cmd_addArg(cmd, NULL);
                     TokType tok;
                     tok.cmd = cmd;
@@ -134,6 +137,7 @@ Command         : Modifiers WORD ArgList Modifiers  {
 
 ArgList         : ArgList WORD  {
                     cmd_addArg($1.cmd, $2.strVal);
+                    free($2.strVal);
                     $$ = $1;
                 }
                 |   {
@@ -161,6 +165,7 @@ Redirection     : IO_NUMBER Redirect_op WORD    {
                     red.mode = $2.iVal;
                     red.descriptor = $1.iVal;
                     red.target = strdup($3.strVal);
+                    free($3.strVal);
                     TokType tok;
                     tok.red = red;
                     $$ = tok;
@@ -183,6 +188,7 @@ Redirection     : IO_NUMBER Redirect_op WORD    {
                             break;
                     }
                     red.target = strdup($2.strVal);
+                    free($2.strVal);
                     TokType tok;
                     tok.red = red;
                     $$ = tok;
