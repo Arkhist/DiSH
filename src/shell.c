@@ -9,6 +9,7 @@
 
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 #include "environment.h"
@@ -33,9 +34,15 @@ int executeFromPath(int pipes[2], Command* cmd, /*@out@*/ int* ret)
     forkVal = fork();
     if(forkVal == 0)
     {
+        for(int i = 0; i < cmd->redirAmt; i++)
+        {
+            FileRedirection r = cmd->redirections[i]; // TODO : Add modes to redirections
+            int fd = open(r.target, O_RDWR | O_CREAT | ((r.mode != RED_WRITE) ? O_APPEND : O_TRUNC ), 0666);
+            redirect(fd, r.descriptor); // TODO : check errors
+        }
         for(int i = 0; i < 2; i++)
             if(pipes[i] != -1)
-                redirect(pipes[i], i);
+                redirect(pipes[i], i); // TODO : check errors
         int r = execvp(cmd->argv[0], cmd->argv);
         exit(r);
     }

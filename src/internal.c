@@ -8,7 +8,7 @@
 #include "common.h"
 
 #define _DEFAULT_SOURCE 1
-#define INTERN_COMMAND_AMT 5
+#define INTERN_COMMAND_AMT 4
 #define _XOPEN_SOURCE 700
 
 int exiting = 0;
@@ -22,7 +22,6 @@ typedef struct {
 
 
 static int changeDirectory(Command* cmd);
-static int printWorkingDirectory(Command* cmd);
 static int assign(Command* cmd);
 static int alias(Command* cmd);
 static int exitSh(Command* cmd);
@@ -30,7 +29,6 @@ static int exitSh(Command* cmd);
 
 CommandFunctID internalCommands[INTERN_COMMAND_AMT] = {
     {"cd", changeDirectory},
-    {"pwd", printWorkingDirectory},
     {"_assign", assign},
     {"alias", alias},
     {"exit", exitSh}
@@ -121,12 +119,6 @@ static int changeDirectory(Command* cmd)
     return 0;
 }
 
-static int printWorkingDirectory(Command* cmd)
-{
-    printf("%s\n", getenv("PWD"));
-    return 0;
-}
-
 static int assign(Command* cmd)
 {
     if(cmd->argc != 3)
@@ -150,7 +142,6 @@ static int alias(Command* cmd)
         printf("Usage: alias ALIAS [ALIASED]\n");
         return 1;
     }
-    
 
     return 0;
 }

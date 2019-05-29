@@ -8,11 +8,18 @@
 
 char* strdup(char* s); 
 
+enum RedirectionMode
+{
+    RED_WRITE = '>',
+    RED_APPEND = '!',
+    RED_READ = '<'
+};
+
 typedef struct
 {
     int descriptor;
     char* target;
-    int append;
+    enum RedirectionMode mode;
 } FileRedirection;
 
 typedef struct

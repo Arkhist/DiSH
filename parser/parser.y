@@ -158,7 +158,7 @@ Modifiers       : Modifiers Redirection {
 
 Redirection     : IO_NUMBER Redirect_op WORD    {
                     FileRedirection red;
-                    red.append = $2.iVal == '!';
+                    red.mode = $2.iVal;
                     red.descriptor = $1.iVal;
                     red.target = strdup($3.strVal);
                     TokType tok;
@@ -167,18 +167,19 @@ Redirection     : IO_NUMBER Redirect_op WORD    {
                 }
                 | Redirect_op WORD {
                     FileRedirection red;
-                    red.append = 0;
                     switch($1.iVal)
                     {
                         case '<':
                             red.descriptor = 0;
+                            red.mode = RED_READ;
                             break;
                         case '>':
                             red.descriptor = 1;
+                            red.mode = RED_WRITE;
                             break;
                         case '!':
                             red.descriptor = 1;
-                            red.append = 1;
+                            red.mode = RED_APPEND;
                             break;
                     }
                     red.target = strdup($2.strVal);
