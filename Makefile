@@ -20,7 +20,8 @@ SRC=src/main.c\
 	parser/lexer.c\
 	src/common.c\
 	src/shell.c\
-	src/internal.c
+	src/internal.c\
+	src/environment.c
 NAME=dish
 
  

@@ -5,7 +5,8 @@
 #include <limits.h>
 #include <stdlib.h>
 
-#include "common.h"
+#include "environment.h"
+
 
 #define _DEFAULT_SOURCE 1
 #define INTERN_COMMAND_AMT 4
@@ -137,10 +138,18 @@ static int assign(Command* cmd)
 
 static int alias(Command* cmd)
 {
-    if(cmd->argc < 2)
+    if(cmd->argc < 3)
     {
         printf("Usage: alias ALIAS [ALIASED]\n");
         return 1;
+    }
+    if(cmd->argc == 3)
+    {
+        removeAlias(cmd->argv[1]);
+    }
+    else
+    {
+        addAlias(cmd->argv);
     }
 
     return 0;
