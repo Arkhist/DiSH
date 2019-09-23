@@ -26,7 +26,6 @@ Command* processAliases(Command* cmd)
             Command* r = cmd_copy(aliasArray[i].target);
             for(int i = 0; i < cmd->redirAmt; i++)
                 cmd_addRedirect(r, cmd->redirections[i]);
-            cmd_destroy(cmd);
             return r;
         }
     }

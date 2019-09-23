@@ -50,7 +50,7 @@ int executeInternal(Command* cmd, /*@out@*/ int* ret)
 
 static int changeDirectory(Command* cmd)
 {
-    if(cmd->argc < 2)
+    if(cmd->argc < 3)
     {
         printf("Usage: cd PATH\n");
         return 1;

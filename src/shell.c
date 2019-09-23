@@ -58,16 +58,16 @@ int executeFromPath(int pipes[2], Command* cmd, /*@out@*/ int* ret)
     }
 }
 
-int executeCommand(int pipes[2], Command* cmd)
+int executeCommand(int pipes[2], Command* srcCmd)
 {
-    cmd = processAliases(cmd);
-    if(cmd->argc == 0)
-        return 0;
+    Command* cmd = processAliases(srcCmd);
     int ret = 0;
-    if(executeInternal(cmd, &ret))
-        return ret;
-    if(executeFromPath(pipes, cmd, &ret))
-        return ret;
+    if(cmd->argc == 0);
+    else if(executeInternal(cmd, &ret));
+    else 
+        executeFromPath(pipes, cmd, &ret);
+    if(srcCmd != cmd)
+        cmd_destroy(cmd);
     return 0;
 }
 

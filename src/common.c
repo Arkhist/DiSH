@@ -61,7 +61,7 @@ void cmd_destroy(Command* cmd)
 {
     if(cmd->argc > 0)
     {
-        for(int i = 0; i < cmd->argc; i++)
+        for(int i = 0; i < cmd->argc-1; i++)
             free(cmd->argv[i]);
         free(cmd->argv);
     }
