@@ -68,7 +68,7 @@ int executeCommand(int pipes[2], Command* srcCmd)
         executeFromPath(pipes, cmd, &ret);
     if(srcCmd != cmd)
         cmd_destroy(cmd);
-    return 0;
+    return ret;
 }
 
 int executeLine(CommandLine* line)
