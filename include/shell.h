@@ -1,3 +1,3 @@
 #pragma once
 
-int mainLoop();
+int mainLoop(FILE* inputFile);
