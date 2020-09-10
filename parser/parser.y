@@ -23,21 +23,21 @@ void yyerror(const char *s);
 
 %%
 
-CommandPack     : CommandPack CommandLine background_opt {
-                    if($2.line != NULL)
+CommandPack     : CommandPack Linebreak CommandLine background_opt {
+                    if($3.line != NULL)
                     {
-                        $2.line->background = $3.iVal;
-                        cmdp_addLine($1.pack, $2.line);
+                        $3.line->background = $4.iVal;
+                        cmdp_addLine($1.pack, $3.line);
                         outPack = $1.pack;
                     }
                     $$ = $1;
                 }
-                | CommandLine background_opt {
+                | LinebreakOPT CommandLine background_opt {
                     CommandPack* pack = cmdp_create();
-                    if($1.line != NULL)
+                    if($2.line != NULL)
                     {
-                        $1.line->background = $2.iVal;
-                        cmdp_addLine(pack, $1.line);
+                        $2.line->background = $3.iVal;
+                        cmdp_addLine(pack, $2.line);
                     }
                     TokType tok;
                     tok.pack = pack;
@@ -45,7 +45,7 @@ CommandPack     : CommandPack CommandLine background_opt {
                     $$ = tok;
                     YYACCEPT;
                 }
-                | END {
+                | LinebreakOPT END {
                     outPack = NULL;
                     YYACCEPT;
                 }
@@ -70,11 +70,6 @@ CommandLine     : CommandLine Chain_op Command {
                     cmdl_addCmd(line, $1.cmd, CHAIN_NONE);
                     TokType tok;
                     tok.line = line;
-                    $$ = tok;
-                }
-                | Linebreak {
-                    TokType tok;
-                    tok.line = NULL;
                     $$ = tok;
                 }
                 ;
@@ -210,6 +205,10 @@ Redirect_op     : LESS  {
                     tok.iVal = '!';
                     $$ = tok;
                 }
+                ;
+
+LinebreakOPT    : Linebreak
+                |
                 ;
 
 Linebreak       : NEWLINE
