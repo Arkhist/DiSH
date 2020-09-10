@@ -145,7 +145,7 @@ int mainLoop(FILE* inputFile)
         if(inputFile == stdin)
             displayPrompt(lastErr);
         CommandPack* pack = parseCommands(inputFile);
-        if(pack == NULL) // TODO : Newline doesn't work ?!
+        if(pack == NULL)
         {
             if(inputFile == stdin)
                 printf("\n");

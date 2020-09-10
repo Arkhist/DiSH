@@ -18,6 +18,11 @@ int main(int argc, char** argv)
     if(argc > 1)
     {
         input = fopen(argv[1], "r");
+        if(input == NULL)
+        {
+            fprintf(stderr, "%s: impossible to open file %s\n", argv[0], argv[1]);
+            return 1;
+        }
     }
     mainLoop(input);
 
