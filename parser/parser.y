@@ -45,7 +45,7 @@ CommandPack     : CommandPack CommandLine background_opt {
                     $$ = tok;
                     YYACCEPT;
                 }
-                | END   {
+                | END {
                     outPack = NULL;
                     YYACCEPT;
                 }
@@ -65,7 +65,7 @@ CommandLine     : CommandLine Chain_op Command {
                     cmdl_addCmd($1.line, $3.cmd, c);
                     $$ = $1;
                 }
-                | Command   {
+                | Command {
                     CommandLine* line = cmdl_create();
                     cmdl_addCmd(line, $1.cmd, CHAIN_NONE);
                     TokType tok;
@@ -214,5 +214,6 @@ Redirect_op     : LESS  {
 
 Linebreak       : NEWLINE
                 | SEPARATOR
-                | Linebreak Linebreak
+                | Linebreak NEWLINE
+                | Linebreak SEPARATOR
                 ;
