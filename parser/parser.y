@@ -13,7 +13,7 @@ void yyerror(const char *s);
 %define parse.trace
 
 
-%token NEWLINE SEPARATOR
+%token NEWLINE_T SEPARATOR
 
 %token WORD
 
@@ -215,8 +215,8 @@ LinebreakOPT    : Linebreak
                 |
                 ;
 
-Linebreak       : NEWLINE
+Linebreak       : NEWLINE_T
                 | SEPARATOR
-                | Linebreak NEWLINE
+                | Linebreak NEWLINE_T
                 | Linebreak SEPARATOR
                 ;

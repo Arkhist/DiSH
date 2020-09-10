@@ -1,7 +1,7 @@
 CC=clang
 CFLAGS=-Wall -Wextra -std=c11 -Wno-implicit-function-declaration
 INCLUDES=-I./include -I./parser
-LDFLAGS=-lfl
+LDFLAGS=-lreadline
 CFLAGS+= $(INCLUDES)
 
 LEXGEN=flex

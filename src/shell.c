@@ -16,11 +16,7 @@
 #include "common.h"
 #include "internal.h"
 
-
-void displayPrompt(int err)
-{
-    printf("dish [%d]> ", err);
-}
+int lastError = 0;
 
 int redirect(int desc, int target)
 {
@@ -137,13 +133,12 @@ int executePack(CommandPack* pack)
 
 int mainLoop(FILE* inputFile)
 {    
-    int lastErr = 0;
     exiting = 0;
 
     while(!exiting)
     {
-        if(inputFile == stdin)
-            displayPrompt(lastErr);
+        /*if(isatty(fileno(inputFile)))
+            displayPrompt(lastError);*/
         CommandPack* pack = parseCommands(inputFile);
         if(pack == NULL)
         {
@@ -152,9 +147,10 @@ int mainLoop(FILE* inputFile)
             break;
         }
 
-        lastErr = executePack(pack);
+        lastError = executePack(pack);
         cmdp_destroy(pack);
     }
 
     return 0;
 }
+
