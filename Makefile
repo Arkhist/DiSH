@@ -35,9 +35,9 @@ dish: $(OBJ)
 	$(CC) -o $(NAME) $(OBJ) $(CFLAGS) $(INCLUDES) $(LDFLAGS)
 
 parser/parser.o: parser/parser.y parser/lexer.l
-	$(PARGEN) parser/parser.y --output=parser/parser.c --defines=parser/parser.h &&\
-	$(LEXGEN) --outfile=parser/lexer.c -s parser/lexer.l &&\
-	$(CC) -o parser/lexer.o parser/lexer.c $(CFLAGS) $(INCLUDES) -c &&\
+	$(PARGEN) parser/parser.y --output=parser/parser.c --defines=parser/parser.h
+	$(LEXGEN) --outfile=parser/lexer.c -s parser/lexer.l
+	$(CC) -o parser/lexer.o parser/lexer.c $(CFLAGS) $(INCLUDES) -c
 	$(CC) -o parser/parser.o parser/parser.c $(CFLAGS) $(INCLUDES) -c
 
 

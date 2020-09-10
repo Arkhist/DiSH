@@ -12,6 +12,8 @@
 blanks [ \t]+
 chars [^ \t\n;=\<\>\$]+
 
+%option nounput noinput
+
 %%
 
 {blanks}    { 
