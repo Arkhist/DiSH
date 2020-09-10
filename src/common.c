@@ -127,7 +127,11 @@ void cmdp_destroy(CommandPack* pack)
 
 CommandPack* parseCommands(FILE* inputFile)
 {
-    yyrestart(inputFile);
+    static int initialized = 0;
+    if(!initialized) {
+        yyrestart(inputFile);
+        initialized = 1;
+    }
     if(yyparse())
         return NULL;
     return outPack;

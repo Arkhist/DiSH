@@ -1,6 +1,8 @@
 %{
 #include "common.h"
 
+#define YYDEBUG 1
+extern int yydebug;
 
 int yylex();
 void yyerror(const char *s);
@@ -8,6 +10,8 @@ void yyerror(const char *s);
 %}
 
 %define parse.error verbose
+%define parse.trace
+
 
 %token NEWLINE SEPARATOR
 
