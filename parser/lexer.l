@@ -19,7 +19,7 @@ int yyinput(char* buf, int result, int max_size);
 %}
 
 blanks [ \t]+
-chars [^ \t\n;=\<\>\$]+
+chars [^ \t\n;=\<\>]+
 
 %option nounput noinput
 %option noyywrap
@@ -65,11 +65,6 @@ chars [^ \t\n;=\<\>\$]+
 \=  {
     return EQUALS;
 }
-
-\$  {
-    return DOLLAR;
-}
-
 
 [0-9]+/[\<\>]   {
     yylval.iVal = atoi(yytext);

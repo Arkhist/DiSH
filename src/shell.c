@@ -57,6 +57,7 @@ int executeFromPath(int pipes[2], Command* cmd, /*@out@*/ int* ret)
 int executeCommand(int pipes[2], Command* srcCmd)
 {
     Command* cmd = processAliases(srcCmd);
+    processEnv(srcCmd);
     int ret = 0;
     if(cmd->argc == 0);
     else if(executeInternal(cmd, &ret));

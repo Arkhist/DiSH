@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern char** environ;
 
 int maxAliasId = 0;
 
@@ -14,7 +15,6 @@ typedef struct
 
 AliasStruct* aliasArray = NULL;
 
-// Argument alias ?
 Command* processAliases(Command* cmd)
 {
     for(int i = 0; i < maxAliasId; i++)
@@ -33,6 +33,71 @@ Command* processAliases(Command* cmd)
         }
     }
     return cmd;
+}
+
+void processEnv(Command* cmd)
+{
+    char* buf;
+    size_t buflen = 0;
+    int parsingDollar = 0;
+    for(int i = 0; i < cmd->argc; i++)
+    {
+        if(!cmd->argv[i])
+            continue;
+        int startIndex = 0, endIndex = 0, length = strlen(cmd->argv[i]);
+        while(endIndex < length)
+        {
+            if(cmd->argv[i][endIndex] == '$')
+            {
+                if(!parsingDollar)
+                {
+                    parsingDollar = 1;
+                    buflen = endIndex;
+                    buf = malloc(buflen*sizeof(char)+1);
+                    buf[buflen] = 0;
+                    memcpy(buf, cmd->argv[i], endIndex);
+                }
+                else
+                {
+                    char* tmpbuf = malloc((endIndex-startIndex) * sizeof(char) + 1);
+                    memcpy(tmpbuf, (cmd->argv[i])+startIndex, endIndex-startIndex);
+                    char* envValue = getenv(tmpbuf);
+                    free(tmpbuf);
+                    if(envValue) {
+                        buflen += sizeof(envValue);
+                        buf = realloc(buf, (buflen+strlen(envValue))*sizeof(char)+1);
+                        strcat(buf, envValue);
+                    }
+                    startIndex = endIndex;
+                }
+                startIndex++;
+                endIndex++;
+            }
+            else
+            {
+                if(!parsingDollar)
+                {
+                    startIndex++;
+                }
+                endIndex++;
+            }
+        }
+        if(parsingDollar && startIndex != endIndex)
+        {
+            char* tmpbuf = malloc((endIndex-startIndex) * sizeof(char) + 1);
+            tmpbuf[endIndex-startIndex] = 0;
+            memcpy(tmpbuf, (cmd->argv[i])+startIndex, endIndex-startIndex);
+            char* envValue = getenv(tmpbuf);
+            free(tmpbuf);
+            if(envValue) {
+                buflen += sizeof(envValue);
+                buf = realloc(buf, (buflen+strlen(envValue))*sizeof(char)+1);
+                strcat(buf, envValue);
+            }
+            free(cmd->argv[i]);
+            cmd->argv[i] = buf;
+        }
+    }
 }
 
 int removeAlias(char* alias)
