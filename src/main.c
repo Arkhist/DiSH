@@ -6,13 +6,13 @@
 int main(int argc, char** argv)
 {
     FILE* profile;
-    profile = fopen("profile", "r");
+    profile = fopen(".dishwasher", "r");
     if(profile != NULL)
     {
         mainLoop(profile);
         fclose(profile);
+        
     }
-
     FILE* input = stdin;
     if(argc > 1)
     {
@@ -23,6 +23,7 @@ int main(int argc, char** argv)
             return 1;
         }
     }
+    yyrestart(input);
     mainLoop(input);
 
     if(input != stdin)

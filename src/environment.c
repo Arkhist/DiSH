@@ -24,6 +24,9 @@ Command* processAliases(Command* cmd)
         if(!strcmp(aliasArray[i].alias, cmd->argv[0]))
         {            
             Command* r = cmd_copy(aliasArray[i].target);
+            for(int i = 1; i < cmd->argc; i++) {
+                cmd_addArg(r, cmd->argv[i]);
+            }
             for(int i = 0; i < cmd->redirAmt; i++)
                 cmd_addRedirect(r, cmd->redirections[i]);
             return r;

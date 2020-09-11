@@ -66,6 +66,10 @@ chars [^ \t\n;=\<\>\$]+
     return EQUALS;
 }
 
+\$  {
+    return DOLLAR;
+}
+
 
 [0-9]+/[\<\>]   {
     yylval.iVal = atoi(yytext);

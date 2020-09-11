@@ -21,7 +21,7 @@ void yyerror(const char *s);
 
 %token END
 
-%token AMP PIPE LESS GREAT DGREAT AND EQUALS
+%token AMP PIPE LESS GREAT DGREAT AND EQUALS DOLLAR
 
 %start CommandPack
 
